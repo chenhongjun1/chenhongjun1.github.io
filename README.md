@@ -463,19 +463,27 @@ MVC：Spring的MVC框架是非常优秀的，从各个方面都可以甩Struts 2
 
 JAVA面试题 - P6
 JAVA基础CheckList 要求是P6能够全部回答正确，P5+允许有1个点回答错误。
+
 JVM相关，JAVA里的垃圾回收有什么目的？什么时候会触发？（追问：频繁full GC问题排查思路，GVM调优）
+
 垃圾回收的目的，内存管理，释放无用的对象； 能够完成的描述一次垃圾回收的过程。
 （年轻代、老年代、永久代） Full gc 现象，分析定位，解决； 集合相关，HashMap实现原理？（追问：多线程环境如何使用Map）
+
 HashMap存储，碰撞，扩容，性能，红黑树； 线程相关的HashTable，CurrentHashMap；
+
 多线程相关：线程池ThreadPoolExecutor有没有使用过，解决什么问题？（追问：线程池的扩容机制）
 线程管理解耦，降低资源消耗，提高可管理性 setCorePoolSize和setMaximumPoolSize两个参数，创建和销毁的机制。
+
 reject机制默认有Discard/DiscardOld/Abort/CallersRun, 默认为abort报错。
 能够讲明白原理的，标记出来 算加分 锁相关：设计一个高速缓存，允许多个线程读，只允许一个线程写？ python；
+
 读写锁，CurrentHashMap 考虑性能和数据一致性 分布式：分布式系统中不同的模块如何进行通信？
 RPC、RMI、Web Service、JMS（MQ）
+
 RPC 和 HTTP比较 RPC框架的原理（注册发现机制、路由、降级、负载均衡）
 dubbo、thrift、 MQ（消息消费模式：广播、点对点） 操作系统：
 从那几个方面评估机器的负载
+
 CPU ，当java进程占用CPU过高的时候，经常100%，怎么排查
 top查看进程id，ps查看线程id，jstack堆栈信息 内存，java内存查看分析工具
 gc日志，在jvm启动参数中加入 -XX:+PrintGC -XX:+PrintGCDetails -XX:+PrintGCTimestamps -XX:+PrintGCApplicationStopedTime jconsole，jmap，jhat，jstat，MAT load，load是怎么计算的
@@ -483,6 +491,7 @@ load 要结合cpu数量来看，我们假设cpu数量为4，每个cpu都正好�
 sar -n DEV
 cat /home/a.log | grep 'abc' | sort | uniq 理解这段脚本
 统计a.log中包含abc的行，正序排序并去重 用JAVA实现，画板上codeing 扩展，超大文件，MapReduce思想 数据库：Mysql
+
 MySQL中有一条SQL比较慢，如果让你去优化，你会怎么做？为什么要这样做？
 explain查看执行计划，是否走索引，sql本身优化，比如模糊查询，子查询，loop 表数据量过大，分库分表
 已经知道是哪个sql；explin； redis； 读写分离； 大数据：搜索引擎，NOSQL，时序数据库
@@ -491,60 +500,109 @@ Mysql 用的比较少；怎么解呢；百万级别；
 
 数据库优化
 避免全表扫描 
+
 1、对查询进行优化、应尽量避免全表扫描、首先应考虑在 where 及 order by 涉及的列上建立索引。 
+
 2、应尽量避免在 where 子句中对字段进行 null 值判断、否则将导致引擎放弃使用索引而进行全表扫描、如： select id from t where num is null; --可以在num上设置默认值0、确保表中num列没有null值、然后这样查询： select id from t where num=0; 
+
 3、应尽量避免在 where 子句中使用!=、<>、>=、<=、>、<等操作符、否则将引擎放弃使用索引而进行全表扫描。 
+
 4、应尽量避免在 where 子句中使用 or 来连接条件、否则将导致引擎放弃使用索引而进行全表扫描、如： select id from t where num=10 or num=20 --可以这样查询： select id from t where num=10 union all select id from t where num=20; 
+
 5、in 和 not in 也要慎用、否则会导致全表扫描、如： select id from t where num in(1,2,3); 对于连续的数值、能用 between 就不要用 in 了： select id from t where num between 1 and 3; 
+
 6、下面的查询也将导致全表扫描： select id from t where name like '%abc%'; 尽量使用select id from t where name like 'abc%'; 通配符在开始索引不会被使用 --若要提高效率、可以考虑全文检索。
+
 7、如果在 where 子句中使用参数、也会导致全表扫描。因为SQL只有在运行时才会解析局部变量、但优化程序不能将访问计划的选择推迟到运行时；它必须在编译时进行选择。然而、如果在编译时建立访问计划、变量的值还是未知的、因而无法作为索引选择的输入项。如下面语句将进行全表扫描： select id from t where num=@num; --可以改为强制查询使用索引： select id from t with(index(索引名)) where num=@num; 
+
 8、应尽量避免在 where 子句中对字段进行表达式操作、这将导致引擎放弃使用索引而进行全表扫描。如： select id from t where num/2=100; --应改为: select id from t where num=100*2;
+
 9、应尽量避免在where子句中对字段进行函数操作、这将导致引擎放弃使用索引而进行全表扫描。如： select id from t where substring(name,1,3)=abc; --name以abc开头的id select id from t where datediff(day,createdate,2005-11-30)=0; --‘2005-11-30’生成的id --应改为: select id from t where name like abc%; select id from t where createdate>=2005-11-30 and createdate<2005-12-1; 
+
 10、不要在 where 子句中的“=”左边进行函数、算术运算或其他表达式运算、否则系统将可能无法正确使用索引。 
+
 11、在使用索引字段作为条件时、如果该索引是复合索引、那么必须使用到该索引中的第一个字段作为条件时才能保证系统使用该索引、否则该索引将不会被使用、并且应尽可能的让字段顺序与索引顺序相一致。 
+
 12、不要写一些没有意义的查询、如需要生成一个空表结构： select col1,col2 into #t from t where 1=0; --这类代码不会返回任何结果集、但是会消耗系统资源的、应改成这样： create table #t(...); 
+
 13、很多时候用 exists 代替 in 是一个好的选择： select num from a where num in(select num from b); --用下面的语句替换： select num from a where exists(select 1 from b where num=a.num); 
+
 14、并不是所有索引对查询都有效、SQL是根据表中数据来进行查询优化的、当索引列有大量数据重复时、SQL查询可能不会去利用索引、如一表中有字段sex、male、female几乎各一半、那么即使在sex上建了索引也对查询效率起不了作用。 
+
 15、索引并不是越多越好、索引固然可以提高相应的 select 的效率、但同时也降低了 insert 及 update 的效率、因为 insert 或 update 时有可能会重建索引、所以怎样建索引需要慎重考虑、视具体情况而定。一个表的索引数最好不要超过6个、若太多则应考虑一些不常使用到的列上建的索引是否有必要。 
+
 16、应尽可能的避免更新 clustered 索引数据列、因为 clustered 索引数据列的顺序就是表记录的物理存储顺序、一旦该列值改变将导致整个表记录的顺序的调整、会耗费相当大的资源。若应用系统需要频繁更新 clustered 索引数据列、那么需要考虑是否应将该索引建为 clustered 索引。 
-17、尽量使用数字型字段、若只含数值信息的字段尽量不要设计为字符型、这会降低查询和连接的性能、并会增加存储开销。这是因为引擎在处理查询和连接时会逐个比较字符串中每一个字符、而对于数字型而言只需要比较一次就够了。 
-18、尽量使用char，char是固定长度的，查询速度比varchar更快，varchar是根据字符长度来使用空间的，所以不定长的字符串能减少存储空间，但查询效率没有char来的快。当字符串长度固定的时候，推荐用char。 
+
+17、尽量使用数字型字段、若只含数值信息的字段尽量不要设计为字符型、这会降低查询和连接的性能、并会增加存储开销。这是因为引擎在处理查询和连接时会逐个比较字符串中每一个字符、而对于数字型而言只需要比较一次就够了。
+
+18、尽量使用char，char是固定长度的，查询速度比varchar更快，varchar是根据字符长度来使用空间的，所以不定长的字符串能减少存储空间，但查询效率没有char来的快。当字符串长度固定的时候，推荐用char。
+
 19、任何地方都不要使用 select from t 、用具体的字段列表代替“”、不要返回用不到的任何字段。 临时表 & 游标 
+
 20、尽量使用表变量来代替临时表。如果表变量包含大量数据、请注意索引非常有限（只有主键索引）。 
+
 21、避免频繁创建和删除临时表、以减少系统表资源的消耗。 
+
 22、临时表并不是不可使用、适当地使用它们可以使某些例程更有效、例如、当需要重复引用大型表或常用表中的某个数据集时。但是、对于一次性事件、最好使用导出表。 
+
 23、在新建临时表时、如果一次性插入数据量很大、那么可以使用 select into 代替 create table、避免造成大量 log 、以提高速度；如果数据量不大、为了缓和系统表的资源、应先create table、然后insert。 
-24、如果使用到了临时表、在存储过程的最后务必将所有的临时表显式删除、先 truncate table 、然后 drop table 、这样可以避免系统表的较长时间锁定。 
+
+24、如果使用到了临时表、在存储过程的最后务必将所有的临时表显式删除、先 truncate table 、然后 drop table 、这样可以避免系统表的较长时间锁定。
+
 25、尽量避免使用游标、因为游标的效率较差、如果游标操作的数据超过1万行、那么就应该考虑改写。 
+
 26、使用基于游标的方法或临时表方法之前、应先寻找基于集的解决方案来解决问题、基于集的方法通常更有效。
+
 27、与临时表一样、游标并不是不可使用。对小型数据集使用 FAST_FORWARD 游标通常要优于其他逐行处理方法、尤其是在必须引用几个表才能获得所需的数据时。在结果集中包括“合计”的例程通常要比使用游标执行的速度快。如果开发时间允许、基于游标的方法和基于集的方法都可以尝试一下、看哪一种方法的效果更好。 
+
 28、在所有的存储过程和触发器的开始处设置 SET NOCOUNT ON 、在结束时设置 SET NOCOUNT OFF 。无需在执行存储过程和触发器的每个语句后向客户端发送 DONE_IN_PROC 消息。 
+
 29、尽量避免大事务操作、提高系统并发能力。 
+
 30、尽量避免向客户端返回大数据量、若数据量过大、应该考虑相应需求是否合理。
+
 
 优化数据库的八种方法
 1、选取最适用的字段属性 MySQL可以很好的支持大数据量的存取，但是一般说来，数据库中的表越小，在它上面执行的查询也就会越快。因此，在创建表的时候，为了获得更好的性能，我们可以将表中字段的宽度设得尽可能小。 例如，在定义邮政编码这个字段时，如果将其设置为CHAR(255),显然给数据库增加了不必要的空间，甚至使用VARCHAR这种类型也是多余的，因为CHAR(6)就可以很好的完成任务了。同样的，如果可以的话，我们应该使用MEDIUMINT而不是BIGIN来定义整型字段。 另外一个提高效率的方法是在可能的情况下，应该尽量把字段设置为NOT NULL，这样在将来执行查询的时候，数据库不用去比较NULL值。 对于某些文本字段，例如“省份”或者“性别”，我们可以将它们定义为ENUM类型。因为在MySQL中，ENUM类型被当作数值型数据来处理，而数值型数据被处理起来的速度要比文本类型快得多。这样，我们又可以提高数据库的性能。
+
 2、使用连接（JOIN）来代替子查询(Sub-Queries) MySQL从4.1开始支持SQL的子查询。这个技术可以使用SELECT语句来创建一个单列的查询结果，然后把这个结果作为过滤条件用在另一个查询中。例如，我们要将客户基本信息表中没有任何订单的客户删除掉，就可以利用子查询先从销售信息表中将所有发出订单的客户ID取出来，然后将结果传递给主查询，如下所示： DELETE FROM customerinfo WHERE CustomerID NOT in (SELECT CustomerID FROM salesinfo) 使用子查询可以一次性的完成很多逻辑上需要多个步骤才能完成的SQL操作，同时也可以避免事务或者表锁死，并且写起来也很容易。但是，有些情况下，子查询可以被更有效率的连接（JOIN）..替代。例如，假设我们要将所有没有订单记录的用户取出来，可以用下面这个查询完成： SELECT * FROM customerinfo WHERE CustomerID NOT in (SELECTCustomerIDFROMsalesinfo) 如果使用连接（JOIN）..来完成这个查询工作，速度将会快很多。尤其是当salesinfo表中对CustomerID建有索引的话，性能将会更好，查询如下： SELECT * FROM customerinfo LEFT JOIN salesinfo ON customerinfo.CustomerID=salesinfo.CustomerID WHERE salesinfo.CustomerID IS NULL 连接（JOIN）..之所以更有效率一些，是因为MySQL不需要在内存中创建临时表来完成这个逻辑上的需要两个步骤的查询工作。
+
 3、使用联合(UNION)来代替手动创建的临时表 MySQL从4.0的版本开始支持union查询，它可以把需要使用临时表的两条或更多的select查询合并的一个查询中。在客户端的查询会话结束的时候，临时表会被自动删除，从而保证数据库整齐、高效。使用union来创建查询的时候，我们只需要用UNION作为关键字把多个select语句连接起来就可以了，要注意的是所有select语句中的字段数目要想同。下面的例子就演示了一个使用UNION的查询。 SELECT Name,Phone FROM client UNION SELECT Name,BirthDate FROM authorUNION SELECT Name,Supplier FROM product
-4、事务 尽管我们可以使用子查询（Sub-Queries）、连接（JOIN）和联合（UNION）来创建各种各样的查询，但不是所有的数据库操作都可以只用一条或少数几条SQL语句就可以完成的。更多的时候是需要用到一系列的语句来完成某种工作。但是在这种情况下，当这个语句块中的某一条语句运行出错的时候，整个语句块的操作就会变得不确定起来。设想一下，要把某个数据同时插入两个相关联的表中，可能会出现这样的情况：第一个表中成功更新后，数据库突然出现意外状况，造成第二个表中的操作没有完成，这样，就会造成数据的不完整，甚至会破坏数据库中的数据。要避免这种情况，就应该使用事务，它的作用是：要么语句块中每条语句都操作成功，要么都失败。换句话说，就是可以保持数据库中数据的一致性和完整性。事物以BEGIN关键字开始，COMMIT关键字结束。在这之间的一条SQL操作失败，那么，ROLLBACK命令就可以把数据库恢复到BEGIN开始之前的状态。 BEGIN;
+
+4、事务 尽管我们可以使用子查询（Sub-Queries）、连接（JOIN）和联合（UNION）来创建各种各样的查询，但不是所有的数据库操作都可以只用一条或少数几条SQL语句就可以完成的。更多的时候是需要用到一系列的语句来完成某种工作。但是在这种情况下，当这个语句块中的某一条语句运行出错的时候，整个语句块的操作就会变得不确定起来。设想一下，要把某个数据同时插入两个相关联的表中，可能会出现这样的情况：第一个表中成功更新后，数据库突然出现意外状况，造成第二个表中的操作没有完成，这样，就会造成数据的不完整，甚至会破坏数据库中的数据。要避免这种情况，就应该使用事务，它的作用是：要么语句块中每条语句都操作成功，要么都失败。换句话说，就是可以保持数据库中数据的一致性和完整性。事物以BEGIN关键字开始，COMMIT关键字结束。在这之间的一条SQL操作失败，那么，ROLLBACK命令就可以把数据库恢复到BEGIN开始之前的状态。 
+BEGIN;
 INSERT INTO salesinfo SET CustomerID=14;
 UPDATE inventory SET Quantity=11 WHERE item='book';
-COMMIT; 事务的另一个重要作用是当多个用户同时使用相同的数据源时，它可以利用锁定数据库的方法来为用户提供一种安全的访问方式，这样可以保证用户的操作不被其它的用户所干扰。
+COMMIT; 
+事务的另一个重要作用是当多个用户同时使用相同的数据源时，它可以利用锁定数据库的方法来为用户提供一种安全的访问方式，这样可以保证用户的操作不被其它的用户所干扰。
+
 5、锁定表 尽管事务是维护数据库完整性的一个非常好的方法，但却因为它的独占性，有时会影响数据库的性能，尤其是在很大的应用系统中。由于在事务执行的过程中，数据库将会被锁定，因此其它的用户请求只能暂时等待直到该事务结束。如果一个数据库系统只有少数几个用户来使用，事务造成的影响不会成为一个太大的问题；但假设有成千上万的用户同时访问一个数据库系统，例如访问一个电子商务网站，就会产生比较严重的响应延迟。 其实，有些情况下我们可以通过锁定表的方法来获得更好的性能。下面的例子就用锁定表的方法来完成前面一个例子中事务的功能。 LOCK TABLE inventory WRITE SELECT Quantity FROM inventory WHERE Item='book'; ... UPDATE inventory SET Quantity=11 WHERE Item='book';
 UNLOCK TABLES 这里，我们用一个select语句取出初始数据，通过一些计算，用update语句将新值更新到表中。包含有WRITE关键字的LOCKTABLE语句可以保证在UNLOCKTABLES命令被执行之前，不会有其它的访问来对inventory进行插入、更新或者删除的操作。
+
 6、使用外键 锁定表的方法可以维护数据的完整性，但是它却不能保证数据的关联性。这个时候我们就可以使用外键。 例如，外键可以保证每一条销售记录都指向某一个存在的客户。在这里，外键可以把customerinfo表中的CustomerID映射到salesinfo表中CustomerID，任何一条没有合法CustomerID的记录都不会被更新或插入到salesinfo中。 CREATE TABLE customerinfo ( CustomerID INTNOT NULL, PRIMARYKEY (CustomerID))TYPE=INNODB; CREATE TABLE salesinfo ( SalesID INT NOT NULL,CustomerID INT NOT NULL, PRIMARY KEY(CustomerID,SalesID), FOREIGN KEY(CustomerID) REFERENCES customerinfo (CustomerID) ON DELETE CASCADE) TYPE=INNODB; 注意例子中的参数“ON DELETE CASCADE”。该参数保证当customerinfo表中的一条客户记录被删除的时候，salesinfo表中所有与该客户相关的记录也会被自动删除。如果要在MySQL中使用外键，一定要记住在创建表的时候将表的类型定义为事务安全表InnoDB类型。该类型不是MySQL表的默认类型。定义的方法是在CREATETABLE语句中加上TYPE=INNODB。如例中所示。
+
 7、使用索引 索引是提高数据库性能的常用方法，它可以令数据库服务器以比没有索引快得多的速度检索特定的行，尤其是在查询语句当中包含有MAX(),MIN()和ORDERBY这些命令的时候，性能提高更为明显。 那该对哪些字段建立索引呢？ 一般说来，索引应建立在那些将用于JOIN,WHERE判断和ORDERBY排序的字段上。尽量不要对数据库中某个含有大量重复的值的字段建立索引。对于一个ENUM类型的字段来说，出现大量重复值是很有可能的情况 例如customerinfo中的“province”..字段，在这样的字段上建立索引将不会有什么帮助；相反，还有可能降低数据库的性能。我们在创建表的时候可以同时创建合适的索引，也可以使用ALTERTABLE或CREATEINDEX在以后创建索引。此外，MySQL从版本3.23.23开始支持全文索引和搜索。全文索引在MySQL中是一个FULLTEXT类型索引，但仅能用于MyISAM类型的表。对于一个大的数据库，将数据装载到一个没有FULLTEXT索引的表中，然后再使用ALTERTABLE或CREATEINDEX创建索引，将是非常快的。但如果将数据装载到一个已经有FULLTEXT索引的表中，执行过程将会非常慢。
+
 8、优化的查询语句 绝大多数情况下，使用索引可以提高查询的速度，但如果SQL语句使用不恰当的话，索引将无法发挥它应有的作用。 下面是应该注意的几个方面。 · 首先，最好是在相同类型的字段间进行比较的操作。 在MySQL3.23版之前，这甚至是一个必须的条件。例如不能将一个建有索引的INT字段和BIGINT字段进行比较；但是作为特殊的情况，在CHAR类型的字段和VARCHAR类型字段的字段大小相同的时候，可以将它们进行比较。 · 其次，在建有索引的字段上尽量不要使用函数进行操作。 例如，在一个DATE类型的字段上使用YEAE()函数时，将会使索引不能发挥应有的作用。所以，下面的两个查询虽然返回的结果一样，但后者要比前者快得多。 · 第三，在搜索字符型字段时，我们有时会使用LIKE关键字和通配符，这种做法虽然简单，但却也是以牺牲系统性能为代价的。 例如下面的查询将会比较表中的每一条记录。
 SELECT * FROM books
 WHERE name like "MySQL%" 但是如果换用下面的查询，返回的结果一样，但速度就要快上很多：
 SELECT * FROM books
 WHERE name ＞= "MySQL" and name ＜ "MySQM" 最后，应该注意避免在查询中让MySQL进行自动类型转换，因为转换过程也会使索引变得不起作用。
+
 总结： 
 1、创建索引 对于查询占主要的应用来说，索引显得尤为重要。很多时候性能问题很简单的就是因为我们忘了添加索引而造成的，或者说没有添加更为有效的索引导致。如果不加索引的话，那么查找任何哪怕只是一条特定的数据都会进行一次全表扫描，如果一张表的数据量很大而符合条件的结果又很少，那么不加索引会引起致命的性能下降。但是也不是什么情况都非得建索引不可，比如性别可能就只有两个值，建索引不仅没什么优势，还会影响到更新速度，这被称为过度索引。
+
 2、复合索引 比如有一条语句是这样的：select * from users where area='beijing' and age=22; 如果我们是在area和age上分别创建单个索引的话，由于mysql查询每次只能使用一个索引，所以虽然这样已经相对不做索引时全表扫描提高了很多效率，但是如果在area、age两列上创建复合索引的话将带来更高的效率。如果我们创建了(area, age, salary)的复合索引，那么其实相当于创建了(area,age,salary)、(area,age)、(area)三个索引，这被称为最佳左前缀特性。因此我们在创建复合索引时应该将最常用作限制条件的列放在最左边，依次递减。
+
 3、索引不会包含有NULL值的列 只要列中包含有NULL值都将不会被包含在索引中，复合索引中只要有一列含有NULL值，那么这一列对于此复合索引就是无效的。所以我们在数据库设计时不要让字段的默认值为NULL。
+
 4、使用短索引 对串列进行索引，如果可能应该指定一个前缀长度。例如，如果有一个CHAR(255)的 列，如果在前10 个或20 个字符内，多数值是惟一的，那么就不要对整个列进行索引。短索引不仅可以提高查询速度而且可以节省磁盘空间和I/O操作。
+
 5、排序的索引问题 mysql查询只使用一个索引，因此如果where子句中已经使用了索引的话，那么order by中的列是不会使用索引的。因此数据库默认排序可以符合要求的情况下不要使用排序操作；尽量不要包含多个列的排序，如果需要最好给这些列创建复合索引。
+
 6、like语句操作 一般情况下不鼓励使用like操作，如果非使用不可，如何使用也是一个问题。like “%aaa%” 不会使用索引而like “aaa%”可以使用索引。
+
 7、不要在列上进行运算 select * from users where YEAR(adddate)<2007; 将在每个行上进行运算，这将导致索引失效而进行全表扫描，因此我们可以改成 select * from users where adddate<‘2007-01-01';
+
 8、不使用NOT IN和<>操作 NOT IN和<>操作都不会使用索引将进行全表扫描。NOT IN可以NOT EXISTS代替，id<>3则可使用id>3 or id<3来代替。
+
