@@ -53,3 +53,11 @@ LinkedHashMap 的实现原理?
 LinkedHashMap 也是基于 HashMap 实现的，不同的是它定义了一个 Entry header，这个 header 不是放在 Table 里，它是额外独立出来的。
 LinkedHashMap 通过继承 hashMap 中的 Entry, 并添加两个属性 Entry before,after, 和 header 结合起来组成一个双向链表，来实现按插入顺序或访问顺序排序。LinkedHashMap 定义了排序模式 accessOrder，该属性为 boolean 型变量，对于访问顺序，为 true；对于插入顺序，则为 false。一般情况下，不必指定排序模式，其迭代顺序即为默认为插入顺序。
 
+Arraylist 与 LinkedList 区别，ArrayList 与 Vector 区别；
+数据结构:Vector、ArrayList内部使用数组，而LinkedList内部使用双向链表，由数组和链表的特性知：LinkedList适合指定位置插入、删除操作，不适合查找；ArrayList、Vector适合查找，不适合指定位置的插入删除操作。但是ArrayList越靠近尾部的元素进行增删时，其实效率比LinkedList要高
+线程安全:Vector线程安全，ArrayList、LinkedList线程不安全。
+空间:ArrayList在元素填满容器时会自动扩充容器大小的50%，而Vector则是100%，因此ArrayList更节省空间。
+
+
+
+
